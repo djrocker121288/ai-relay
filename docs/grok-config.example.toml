@@ -1,0 +1,17 @@
+# Example Grok Build / CLI MCP configuration for AI Relay.
+# Copy the relevant section into ~/.grok/config.toml (user) or .grok/config.toml (project).
+# Replace the URL and set AI_RELAY_GROK_TOKEN in the environment.
+# Never commit a real token.
+
+[mcp_servers.ai-relay]
+# Local loopback (CLI on the same host as the gateway):
+url = "http://127.0.0.1:8743/mcp"
+# Or a public HTTPS reverse-proxy / tunnel URL:
+# url = "https://relay.example.com/mcp"
+
+headers = { Authorization = "Bearer ${AI_RELAY_GROK_TOKEN}" }
+enabled = true
+
+# Optional timeouts (seconds)
+# startup_timeout_sec = 30
+# tool_timeout_sec = 6000
