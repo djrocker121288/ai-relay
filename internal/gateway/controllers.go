@@ -17,6 +17,7 @@ import (
 const (
 	controllerChatGPT = "chatgpt"
 	controllerGemini  = "gemini"
+	controllerGrok    = "grok"
 	scopeRead         = "job.read"
 	scopeSubmit       = "job.submit"
 	scopeControl      = "job.control"
@@ -85,7 +86,7 @@ func allowedControllerScopes() map[string]bool {
 }
 
 func validControllerKind(kind string) bool {
-	return kind == controllerChatGPT || kind == controllerGemini
+	return kind == controllerChatGPT || kind == controllerGemini || kind == controllerGrok
 }
 
 func hasScope(c *ControllerRecord, want string) bool {
@@ -290,7 +291,7 @@ func (s *Server) controllersHandler(w http.ResponseWriter, r *http.Request) {
 			Scopes []string `json:"scopes"`
 		}
 		if jsonDecode(r, &req) != nil || !validControllerKind(req.Kind) {
-			http.Error(w, "kind must be chatgpt or gemini", http.StatusBadRequest)
+			http.Error(w, "kind must be chatgpt, gemini, or grok", http.StatusBadRequest)
 			return
 		}
 		if len(req.Scopes) == 0 {

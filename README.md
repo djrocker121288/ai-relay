@@ -18,7 +18,9 @@ runtime caches.
 - ARPL Ed25519 identities, authenticated encrypted sessions, peer allowlists,
   revocation, reconnect, bounded exec, and resumable file transfer.
 - MCP JSON-RPC gateway with versioned request envelopes, replay protection,
-  audit storage, and explicit operator-controlled activation.
+  audit storage, and explicit operator-controlled activation. Supports ChatGPT,
+  Gemini CLI, and Grok (CLI/Build and grok.com custom connectors) via controller
+  credentials.
 - Cross-built archives plus one-click bootstrap entry points for supported
   desktop platforms and Termux.
 - Portable status, doctor, repair, and source-build workflows.
@@ -71,6 +73,11 @@ For an existing source checkout, the Go bootstrap can be run directly:
 go run ./cmd/ai-relay-installer status
 go run ./cmd/ai-relay-installer install --role endpoint
 ~~~
+
+## AI client connectors
+
+- [Grok](docs/GROK.md) — Grok CLI, Grok Build, and grok.com custom MCP connectors
+- [Gemini CLI](docs/GEMINI-CLI.md)
 
 ## Security model
 

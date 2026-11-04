@@ -2,6 +2,7 @@
 
 ## 2.1.2 — 2026-11-04
 
+- Added first-class `grok` controller kind so Grok CLI, Grok Build, and grok.com custom MCP connectors can authenticate against the loopback `/mcp` endpoint. See [docs/GROK.md](docs/GROK.md).
 - Hardened resident and direct-client reconnection against scheduling jitter with
   a minimum 1-second inbound stale-link threshold and minimum 500-ms
   heartbeat write deadline for unusually short heartbeat intervals.
