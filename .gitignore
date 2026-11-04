@@ -1,0 +1,43 @@
+*.pem
+*.key
+*.secret
+*.p12
+*.pfx
+*.token
+*.cred
+._*
+__pycache__/
+*.pyc
+state/
+dist/
+.env
+work/
+dist-ai-relay-*/
+
+# Local build/test caches and generated release material.
+.cache/
+.release-handoffs/
+.release-logs/
+.release-snapshots/
+.release-tmp/
+.accept/
+deploy/android/.gradle/
+deploy/android/**/build/
+*.log
+*.tmp
+*.swp
+
+# Local configuration and runtime state.
+.env.*
+*.sqlite
+*.sqlite3
+*.db
+credentials/
+secrets/
+runtime/
+sessions/
+*.session
+
+# Local release/checksum scratch files.
+release-*.txt
+SHA256SUMS.local

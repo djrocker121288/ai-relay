@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>Label</key><string>com.ai-relay.arpl</string>
+<key>ProgramArguments</key><array>
+<string>/usr/local/bin/ai-relay-arpl</string><string>connect</string>
+<string>-addr</string><string>SERVER3:9443</string>
+<string>-key-file</string><string>/Users/REPLACE/.config/ai-relay/arpl/identity.json</string>
+<string>-session-file</string><string>/Users/REPLACE/.config/ai-relay/arpl/session.json</string>
+<string>-peer-key</string><string>ENROLLED_SERVER_PUBLIC_KEY</string>
+<string>-ca-file</string><string>/Users/REPLACE/.config/ai-relay/arpl/ca.pem</string>
+</array>
+<key>KeepAlive</key><true/><key>RunAtLoad</key><true/>
+<key>StandardOutPath</key><string>/tmp/ai-relay-arpl.out</string>
+<key>StandardErrorPath</key><string>/tmp/ai-relay-arpl.err</string>
+</dict></plist>

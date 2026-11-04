@@ -1,0 +1,10 @@
+services:
+  gateway:
+    build: ..
+    command: ["/usr/local/bin/ai-relay-gateway", "-listen", "127.0.0.1:8743", "-state", "/var/lib/ai-relay"]
+    environment: ["AI_RELAY_MCP_TOKEN=${AI_RELAY_MCP_TOKEN:?set a secret}"]
+    volumes: ["ai-relay-state:/var/lib/ai-relay"]
+    ports: ["127.0.0.1:8743:8743"]
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+volumes: { ai-relay-state: {} }

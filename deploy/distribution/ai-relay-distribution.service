@@ -1,0 +1,22 @@
+[Unit]
+Description=AI Relay distribution service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ai-relay
+Group=ai-relay
+Environment=AI_RELAY_TUNNEL_PROVIDER=
+Environment=AI_RELAY_TUNNEL_HOSTNAME=
+Environment=AI_RELAY_TUNNEL_TARGET=http://127.0.0.1:18787
+Environment=AI_RELAY_TUNNEL_CONFIG=/etc/cloudflared/config.yml
+ExecStart=/usr/local/bin/ai-relay-distribution -listen 127.0.0.1:18787 -manifests /var/lib/ai-relay-distribution/manifests -artifacts /var/lib/ai-relay-distribution/artifacts -data /var/lib/ai-relay-distribution/data
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ai-relay-distribution
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/sh
+set -eu
+here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$here/install.sh" "$@"

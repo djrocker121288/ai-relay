@@ -1,0 +1,19 @@
+[Unit]
+Description=AI Relay ARPL persistent link
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ai-relay
+ExecStart=/usr/local/bin/ai-relay-arpl serve -addr :9443 -key-file /var/lib/ai-relay/arpl/identity.json -peer-key ENROLLED_MAC_PUBLIC_KEY -cert-file /etc/ai-relay/arpl/server.crt -tls-key-file /etc/ai-relay/arpl/server.key
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ai-relay/arpl
+
+[Install]
+WantedBy=multi-user.target

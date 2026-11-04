@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ai-relay": {
+      "httpUrl": "http://127.0.0.1:8743/mcp",
+      "headers": {
+        "Authorization": "Bearer REPLACE_WITH_GEMINI_CONTROLLER_TOKEN"
+      },
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}

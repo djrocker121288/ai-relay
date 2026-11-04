@@ -1,0 +1,29 @@
+name: Bug report
+description: Report a reproducible non-security problem
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private keys, enrollment tokens, production logs, or private endpoints.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Release or commit
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, architecture, and relevant tool versions
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction and sanitized output
+    validations:
+      required: true
+

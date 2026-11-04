@@ -1,0 +1,18 @@
+[Unit]
+Description=AI Relay Gateway (user service)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=%h/.local/bin/ai-relay-gateway -listen 127.0.0.1:8743 -state %h/.local/state/ai-relay
+EnvironmentFile=%h/.config/ai-relay/gateway.env
+Environment=AI_RELAY_CODEX_BIN=codex
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.local/state/ai-relay
+
+[Install]
+WantedBy=default.target

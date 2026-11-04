@@ -1,0 +1,155 @@
+name: Release artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semver release version
+        required: true
+        default: 2.1.2
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: android-actions/setup-android@v3
+      - name: Install Android NDK for Termux binaries
+        run: |
+          sdkmanager "ndk;27.2.12479018"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
+      - name: Select version
+        id: version
+        env:
+          INPUT_VERSION: "${{ inputs.version }}"
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            echo "version=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+          else
+            ref=$GITHUB_REF_NAME
+            version=$(printf '%s' "$ref" | sed 's/^v//')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build release
+        env:
+          AI_RELAY_VERSION: "${{ steps.version.outputs.version }}"
+        run: ./scripts/build-github-release.sh
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-relay-release-${{ steps.version.outputs.version }}
+          path: dist/ai-relay-all-in-one-v${{ steps.version.outputs.version }}
+          if-no-files-found: error
+
+  macos-native:
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Select version
+        id: version
+        env:
+          INPUT_VERSION: "${{ inputs.version }}"
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            echo "version=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+          else
+            ref=$GITHUB_REF_NAME
+            version=$(printf '%s' "$ref" | sed 's/^v//')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Download staged cross-platform release
+        uses: actions/download-artifact@v4
+        with:
+          name: ai-relay-release-${{ steps.version.outputs.version }}
+          path: dist/ai-relay-all-in-one-v${{ steps.version.outputs.version }}
+      - name: Package native macOS artifacts
+        env:
+          VERSION: "${{ steps.version.outputs.version }}"
+        run: |
+          set -eu
+          release="dist/ai-relay-all-in-one-v$VERSION"
+          for arch in amd64 arm64; do
+            work=$(mktemp -d)
+            unzip -q "$release/AI-Relay-ARPL-Setup_${VERSION}_darwin_${arch}.app.zip" -d "$work"
+            app="$work/AI-Relay-ARPL-Setup.app"
+            plutil -lint "$app/Contents/Info.plist"
+            pkgbuild --root "$app" --identifier com.ai-relay.arpl.setup --version "$VERSION" --install-location "/Applications/AI-Relay-ARPL-Setup.app" "$release/AI-Relay-ARPL-Setup_${VERSION}_darwin_${arch}.pkg"
+            hdiutil create -quiet -volname "AI Relay ARPL Setup" -srcfolder "$app" -format UDZO -ov "$release/AI-Relay-ARPL-Setup_${VERSION}_darwin_${arch}.dmg"
+            rm -rf "$work"
+          done
+      - name: Validate macOS app bundles and disk images
+        env:
+          VERSION: "${{ steps.version.outputs.version }}"
+        run: |
+          set -eu
+          release="dist/ai-relay-all-in-one-v$VERSION"
+          for arch in amd64 arm64; do
+            work=$(mktemp -d)
+            unzip -q "$release/AI-Relay-ARPL-Setup_${VERSION}_darwin_${arch}.app.zip" -d "$work"
+            plutil -lint "$work/AI-Relay-ARPL-Setup.app/Contents/Info.plist"
+            hdiutil verify "$release/AI-Relay-ARPL-Setup_${VERSION}_darwin_${arch}.dmg"
+            rm -rf "$work"
+          done
+      - name: Upload native macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-relay-native-macos-${{ steps.version.outputs.version }}
+          path: |
+            dist/ai-relay-all-in-one-v${{ steps.version.outputs.version }}/*darwin*.app.zip
+            dist/ai-relay-all-in-one-v${{ steps.version.outputs.version }}/*darwin*.pkg
+            dist/ai-relay-all-in-one-v${{ steps.version.outputs.version }}/*darwin*.dmg
+          if-no-files-found: error
+
+  android-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+      - name: Select version
+        id: version
+        env:
+          INPUT_VERSION: "${{ inputs.version }}"
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            echo "version=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+          else
+            ref=$GITHUB_REF_NAME
+            version=$(printf '%s' "$ref" | sed 's/^v//')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build Android companion APK
+        run: ./scripts/build-android-companion.sh "${{ steps.version.outputs.version }}"
+      - name: Upload Android companion APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-relay-android-companion-${{ steps.version.outputs.version }}
+          path: dist/android-companion-v${{ steps.version.outputs.version }}
+          if-no-files-found: error

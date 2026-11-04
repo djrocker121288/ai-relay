@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ai-relay.2-watchdog</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/Users/USERNAME/ai-relay-supervisor/watchdog.py</string>
+    <string>--host</string><string>relay.example.invalid</string>
+    <string>--state</string><string>/Users/USERNAME/ai-relay-supervisor/state.json</string>
+    <string>--log</string><string>/Users/USERNAME/ai-relay-supervisor/watchdog.log</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>300</integer>
+  <key>ProcessType</key><string>Background</string>
+  <key>StandardOutPath</key><string>/Users/USERNAME/ai-relay-supervisor/launchd.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/USERNAME/ai-relay-supervisor/launchd.err.log</string>
+</dict>
+</plist>

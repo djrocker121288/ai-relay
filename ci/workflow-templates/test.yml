@@ -1,0 +1,71 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Format check
+        run: test -z "$(gofmt -l $(find cmd internal -name '*.go' -type f))"
+      - name: Test
+        run: go test ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Shell syntax
+        run: |
+          sh -n scripts/*.sh
+          sh -n packaging/all-in-one/*.sh packaging/one-click/*.sh
+          sh scripts/test-all-in-one-installer.sh
+
+  bootstrap-cross-build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Cross-build bootstrap
+        env:
+          GOOS: "${{ matrix.goos }}"
+          GOARCH: "${{ matrix.goarch }}"
+          CGO_ENABLED: "0"
+        run: go build -buildvcs=false -trimpath -o "bootstrap-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/ai-relay-installer
+
+  windows-powershell:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse Windows installer natively
+        shell: pwsh
+        run: |
+          $source = Get-Content -Raw packaging/all-in-one/install-windows.ps1
+          [void][scriptblock]::Create($source)
+          Write-Host "Windows PowerShell installer parse: PASS"

@@ -1,0 +1,18 @@
+[Unit]
+Description=AI Relay outbound agent (user service)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStartPre=/usr/bin/test ! -e %h/.config/ai-relay/disabled
+ExecStart=%h/.local/bin/ai-relay-agent -gateway http://127.0.0.1:8743 -credential-file %h/.config/ai-relay/agent.cred
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.config/ai-relay %h/.local/state/ai-relay
+
+[Install]
+WantedBy=default.target

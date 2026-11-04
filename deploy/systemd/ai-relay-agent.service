@@ -1,0 +1,21 @@
+[Unit]
+Description=AI Relay outbound agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStartPre=/usr/bin/test ! -e /etc/ai-relay/disabled
+User=ai-relay-agent
+Group=ai-relay-agent
+EnvironmentFile=-/etc/ai-relay/agent.env
+ExecStart=/usr/local/bin/ai-relay-agent -gateway http://127.0.0.1:8743 -credential-file /etc/ai-relay/agent.cred
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ai-relay /etc/ai-relay
+
+[Install]
+WantedBy=multi-user.target

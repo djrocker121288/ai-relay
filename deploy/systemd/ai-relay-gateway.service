@@ -1,0 +1,16 @@
+[Unit]
+Description=AI Relay Gateway
+After=network-online.target
+[Service]
+User=ai-relay
+Group=ai-relay
+ExecStart=/usr/local/bin/ai-relay-gateway -listen 127.0.0.1:8743 -state /var/lib/ai-relay
+EnvironmentFile=-/etc/ai-relay/gateway.env
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ai-relay
+[Install]
+WantedBy=multi-user.target

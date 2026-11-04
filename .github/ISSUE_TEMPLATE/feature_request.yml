@@ -1,0 +1,21 @@
+name: Feature request
+description: Propose a scoped improvement
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not propose bypassing OS security prompts or embedding secrets.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and use case
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and security impact
+    validations:
+      required: true
+

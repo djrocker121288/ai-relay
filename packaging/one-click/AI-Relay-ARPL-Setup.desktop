@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=AI Relay + ARPL Setup
+Comment=Stage AI Relay and ARPL from the bundled Linux release
+Terminal=true
+TryExec=AI-Relay-ARPL-Setup_linux_amd64.run
+# File managers that support %k provide the extracted directory location.
+Exec=sh -c "cd \"$(dirname %k)\" && exec ./AI-Relay-ARPL-Setup_linux_amd64.run"
+Categories=System;Network;
